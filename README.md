@@ -22,7 +22,7 @@ Acticiti7工作流引擎
  * 新建本地文件夹
  * 选中文件夹右键，输入命令，文件夹变成Git仓库 `git init`
  * 复制git项目地址 `git clone https://github.com/wwdui/activiti7-workflow.git`
- * 输入默课网账号密码即可下载
+ * 输入github账号密码即可下载
 ![Image text](./src/main/resources/static/git_show/0003.png)
 
 
