@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">上传文件:</label>
+        <div class="layui-input-block">
+            <input name="ID" placeholder="" class="layui-input DialogInput"
+                   lay-verType="tips" lay-verify="required" required disabled/>
+            <button type="button" class="layui-btn DialogBtn" id="uploadBpmn"><i class="layui-icon"></i>上传BPMN</button>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label layui-form-required">流程名称:</label>
+        <div class="layui-input-block">
+            <input name="Name" placeholder="请输入流程名称" class="layui-input"
+                   lay-verType="tips" lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" lay-filter="ProcessDepEditSubmit" lay-submit id="submit">提交</button>
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">返回</button>
+    </div>
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form','layer', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload,
+            $ = layui.$;
+        upload.render({
+            elem: '#upload',
+            url: ''+publicurl+'processDefinition/uploadStreamAndDeployment',
+            auto: false,//选择文件后不自动上传
+            bindAction: '#submit',
+            //上传前的回调
+            before: function () {
+                this.data = {
+                    name: $('input[name="name"]').val()
+                }
+            },
+            //选择文件后的回调
+            choose: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $('#preview').attr('src', result);
+                })
+            },
+            //操作成功的回调
+            done: function (res, index, upload) {
+                var code = res.code === 0 ? 1 : 2;
+                layer.alert(res.msg, {icon: code}, function () {
+                    parent.window.location.reload();
+                })
+            },
+            //上传错误回调
+            error: function (index, upload) {
+                layer.alert('上传失败！' + index);
+            }
+        });
+
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            var index = layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            }, function () {
+
+                // 关闭弹出层
+                layer.close(index);
+
+                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(iframeIndex);
+
+            });
+
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

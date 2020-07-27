@@ -1,0 +1,51 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome-2.html?t=1"
+  },
+  "logoInfo": {
+    "title": "慕课工作流",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "流程管理",
+      "icon": "fa fa-slideshare",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "首页",
+          "href": "page/welcome-2.html",
+          "icon": "fa fa-tachometer",
+          "target": "_self"
+        },
+        {
+          "title": "流程部署列表",
+          "href": "page/ProcessDeployments.html",
+          "icon": "fa fa-calendar",
+          "target": "_self"
+        },
+        {
+          "title": "流程实例列表",
+          "href": "page/ProcessDefinition.html",
+          "icon": "fa fa-calendar",
+          "target": "_self"
+        },
+        {
+          "title": "待办任务",
+          "href": "page/ToDoTasks.html",
+          "icon": "fa fa-snowflake-o",
+          "target": "_self"
+        },
+        {
+          "title": "历史任务",
+          "href": "page/HistoryTasks.html",
+          "icon": "fa fa-snowflake-o",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

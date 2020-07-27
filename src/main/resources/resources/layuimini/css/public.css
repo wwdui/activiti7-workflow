@@ -1,0 +1,174 @@
+body {
+    margin: 15px 15px 15px 15px;
+    background: #f2f2f2;
+}
+
+.layuimini-container {
+    border: 1px solid #f2f2f2;
+    border-radius: 5px;
+    background-color: #ffffff
+}
+
+.layuimini-main {
+    margin: 10px 10px 10px 10px;
+}
+
+/**必填红点 */
+.layuimini-form > .layui-form-item > .required:after {
+    content: '*';
+    color: red;
+    position: absolute;
+    margin-left: 4px;
+    font-weight: bold;
+    line-height: 1.8em;
+    top: 6px;
+    right: 5px;
+}
+
+.layuimini-form > .layui-form-item > .layui-form-label {
+    width: 120px !important;
+}
+
+.layuimini-form > .layui-form-item > .layui-input-block {
+    margin-left: 150px !important;
+}
+
+.layuimini-form > .layui-form-item > .layui-input-block > tip {
+    display: inline-block;
+    margin-top: 10px;
+    line-height: 10px;
+    font-size: 10px;
+    color: #a29c9c;
+}
+
+/**搜索框*/
+.layuimini-container .table-search-fieldset {
+    margin: 0;
+    border: 1px solid #e6e6e6;
+    padding: 10px 20px 5px 20px;
+    color: #6b6b6b;
+}
+
+/**自定义滚动条样式 */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #9c9da0;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    border-radius: 2em
+}
+.layui-card-header{
+    font-size: 16px;
+    font-weight: bold;
+}
+.layui-table-tool-temp{
+    padding-right: 0;
+}
+.floatR{
+    float: right;
+}
+.DialogInput{
+    width: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+.DialogBtn{
+    width: 48%;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 10px;
+}
+/*分页样式*/
+.layui-table-page{
+    border: none;
+}
+.page_div {
+    /*margin-top: 10px;*/
+    /*margin-bottom: 10px;*/
+    font-size: 15px;
+    font-family: "microsoft yahei";
+    color: #666666;
+    margin-right: 10px;
+    padding-left: 20px;
+    box-sizing: border-box;
+    float:right;
+}
+/* 页数按钮样式*/
+.page_div a {
+    display: inline-block;
+    min-width: 23px;
+    height: 23px;
+    line-height: 23px;
+    text-align: center;
+    border: 1px solid #efefef;
+    font-size: 12px;
+    cursor: pointer;
+    margin: 0 3px;
+    border-radius: 50%;
+    /*overflow: hidden;
+       white-space: nowrap;
+      text-overflow: ellipsis;*/
+}
+
+#firstPage,
+#lastPage {
+    display: inline-block;
+    width: 60px;
+    height: 23px;
+    text-align: center;
+    border: 1px solid #efefef;
+    font-size: 12px;
+    cursor: pointer;
+    background: #fff;
+    color: #6699FF;
+    line-height: 22px;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+#prePage,
+#nextPage {
+    display: inline-block;
+    width: 60px;
+    height: 23px;
+    text-align: center;
+    border: 1px solid #efefef;
+    font-size: 12px;
+    cursor: pointer;
+    background: #6699FF;
+    color: #fff;
+    line-height: 22px;
+    border-radius: 15px;
+}
+
+
+.page_div .current {
+    background: #6699FF;
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+}
+
+.totalPages {
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+.totalPages span,
+.totalSize span {
+    color: #0073A9;
+    margin: 0 5px;
+    font-size: 13px;
+}

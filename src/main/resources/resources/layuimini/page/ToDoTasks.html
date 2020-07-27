@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <span class="layui-card-header"><i class="layui-icon layui-icon-form"></i>&nbsp;待办任务列表</span>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="ToDoTasksTableId" lay-filter="currentTableFilter"></table>
+        <!--分页-->
+        <div class="layui-table-page layui-border-box">
+            <div id="barcon" class="page_div" name="barcon"></div>
+        </div>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-handle" lay-event="handle">办理</a>
+        </script>
+
+    </div>
+</div>
+<script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../js/ManualPaging.js"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        var insTb = table.render({
+            elem: '#ToDoTasksTableId',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [''],
+            url: ''+publicurl+'task/getTasks',
+            parseData: function(res){ //res 即为原始返回的数据
+                //处理时间
+                for(var i = 0 ; i< res.obj.length ; i++){
+                    for(k in res.obj[i]) {
+                        res.obj[i]["CreatedDate"] = renderTime(res.obj[i].CreatedDate)
+                    }
+                }
+                return {
+                    "code": res.status === 1 ? 0 : res.status, //解析接口状态,默认成功是0
+                    "msg": res.msg, //解析提示文本
+                    "count": res.obj.length, //解析数据长度
+                    "data": res.obj //解析数据列表
+                };
+            },
+            cols: [[
+                {type: "checkbox", width:'5%',align:"center"},
+                {field: 'ID', width:'25%', title: 'ID',align:"center"},
+                {field: 'InstanceName', width:'25%', title: '流程名称',align:"center"},
+                {field: 'Assignee', width:'15%', title: '办理人',align:"center"},
+                {field: 'CreatedDate', title: '创建时间', width:'15%',align:"center"},
+                {title: '操作', width:'15%', toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: false,
+            skin: 'line',
+            // id:'ToDoTasksTableId',
+            done:function (res, curr, count) {
+                if(count>0){
+                    goPage(1);
+                }
+            }
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'handle') {  // 监听办理操作
+                doHandle(obj);
+            }
+        });
+
+        function renderTime(date) {
+            var dateee = new Date(date).toJSON();
+            return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+        }
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        /* 挂起流程定义 */
+        function doHandle(obj) {
+            console.log(obj,"单条数据");
+            layer.confirm('确定要办理该任务吗？', {
+                skin: 'layui-layer-admin',
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                var loadIndex = layer.load(2);
+                $.get( ''+publicurl+'task/completeTask', {
+                    taskID: obj.data ? obj.data.ID : '',
+                }, function (res) {
+                    layer.close(loadIndex);
+                    if (res.status === 0) {
+                        layer.msg(res.msg, {icon: 1});
+                        insTb.reload();
+                    } else {
+                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                    }
+                }, 'json');
+            });
+        };
+
+    });
+</script>
+
+</body>
+</html>

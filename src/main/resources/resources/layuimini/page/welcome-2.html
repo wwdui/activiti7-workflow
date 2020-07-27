@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页三</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .top-panel {
+            border: 1px solid #eceff9;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .top-panel > .layui-card-body{
+            height: 60px;
+        }
+        .top-panel-number{
+            line-height:60px;
+            font-size: 30px;
+            border-right:1px solid #eceff9;
+        }
+        .top-panel-tips{
+            line-height:60px;
+            font-size: 12px
+        }
+    </style>
+</head>
+<body>
+<!--<div class="layuimini-container">-->
+<div class="layuimini-main">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">流程定义数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number">
+                            23
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <a style="color: #1aa094">今日新增3</a><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">流程实例数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number">
+                           45
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <a style="color: #1aa094">今日新增2</a><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">任务数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number">
+                            54
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <a style="color: #1aa094">今日新增5</a><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">用户数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5">
+                        <div class="layui-col-xs8 layui-col-md8 top-panel-number">
+                            6
+                        </div>
+                        <div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+                            <a style="color: #1aa094">今日新增1</a><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md9">
+            <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div id="echarts-pies" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-dataset" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div id="echarts-map" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
+        </div>
+    </div>
+
+
+</div>
+<!--</div>-->
+<script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            echarts = layui.echarts;
+
+        /**
+         * 报表功能
+         */
+        var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+
+        var optionRecords = {
+            title: {
+                text: '排名前5的流程部署产生的实例数'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['请假流程', '报销流程', '出差申请流程', '采购申请流程', '业务审批流程'],
+                top:30
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['06-26', '06-27', '06-28', '06-29', '06-30', '07-01', '07-02']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '请假流程',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [2, 4, 6, 7, 9, 4, 2]
+                },
+                {
+                    name: '报销流程',
+                    type: 'line',
+                    areaStyle: {},
+                    data: [3, 1, 5, 3, 4, 8, 2]
+                },
+                {
+                    name: '出差申请流程',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [3, 2, 1, 4, 2, 1, 1]
+                },
+                {
+                    name: '采购申请流程',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [3, 2, 6, 8, 4, 2, 3]
+                },
+                {
+                    name: '业务审批流程',
+                    type: 'line',
+                    stack: '总量',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'top'
+                        }
+                    },
+                    areaStyle: {},
+                    data: [6, 5, 8, 7, 9, 10, 8]
+                }
+            ]
+        };
+        echartsRecords.setOption(optionRecords);
+
+
+        /**
+         * 玫瑰图表
+         */
+        var echartsPies = echarts.init(document.getElementById('echarts-pies'), 'walden');
+        var optionPies = {
+            title: {
+                text: '排名前五流程部署产生实例数',
+                // left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                // orient: 'vertical',
+                x: 'center',
+                data: ['请假流程', '报销流程', '出差申请流程', '采购申请流程', '业务审批流程'],
+                bottom:10
+            },
+            series: [
+                {
+                    name: '实例数据',
+                    type: 'pie',
+                    radius: '46%',
+                    center: ['50%', '45%'],
+                    roseType: 'radius',
+                    labelLine:{
+                        length:5,
+                        length2:3
+                    },
+                    data: [
+                        {value: 2, name: '请假流程'},
+                        {value: 3, name: '报销流程'},
+                        {value: 4, name: '出差申请流程'},
+                        {value: 6, name: '采购申请流程'},
+                        {value: 6, name: '业务审批流程'}
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        echartsPies.setOption(optionPies);
+
+
+        /**
+         * 柱状图
+         */
+        var echartsDataset = echarts.init(document.getElementById('echarts-dataset'), 'walden');
+
+        var optionDataset = {
+            legend: {
+                data:["任务创建数","任务完成数"],
+                top:20
+            },
+            tooltip: {},
+            grid: {
+                left: '30',
+                right: '20',
+                bottom: '30',
+            },
+            dataset: {
+                dimensions: ['product', '任务创建数', '任务完成数'],
+                source: [
+                    {product: '06-30', '任务创建数': 4, '任务完成数': 8},
+                    {product: '07-01', '任务创建数': 8, '任务完成数': 7},
+                    {product: '07-02', '任务创建数': 9, '任务完成数': 5},
+                ]
+            },
+            xAxis: {type: 'category'},
+            yAxis: {},
+            // Declare several bar series, each will be mapped
+            // to a column of dataset.source by default.
+            series: [
+                {type: 'bar'},
+                {type: 'bar'}
+            ]
+        };
+
+        echartsDataset.setOption(optionDataset);
+
+
+        /**
+         * 过去7天任务创建和任务统计折线图
+         */
+        var echartsline = echarts.init(document.getElementById('echarts-map'), 'walden');
+
+
+        var option = {
+            title: {
+                text: '过去7天任务创建数和完成数统计'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['任务创建数', '任务完成数'],
+                top:30
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['06-26', '06-27', '06-28', '06-29', '06-30', '07-01', '07-02']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '任务创建数',
+                    type: 'line',
+                    stack: '总量',
+                    data: [12, 13, 10, 13, 9, 23, 21]
+                },
+                {
+                    name: '任务完成数',
+                    type: 'line',
+                    data: [22, 18, 19, 23, 29, 33, 31]
+                },
+
+            ]
+        };
+
+        echartsline.setOption(option);
+
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            echartsRecords.resize();
+            echartsPies.resize();
+            echartsDataset.resize();
+            echartsline.resize();
+        }
+
+    });
+</script>
+</body>
+</html>
