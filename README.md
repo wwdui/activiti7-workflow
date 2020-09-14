@@ -81,7 +81,15 @@ Acticiti7工作流引擎
 ![Image text](./src/main/resources/static/git_show/0002.gif)
 
 # 使用说明
-
-文档地址：[查看文档待更新](https://coding.imooc.com/class/454.html)
-
-
+### 动态表单配置原则（课程里有详细讲解）
+>
+    控件命名约束：FormProperty_0ueitp2-_!类型-_!名称-_!默认值-_!是否参数
+    ID：自行标号同一流程定义无重复
+    类型：string、long、cUser（cUser为自定义类型读取用户列表）
+    默认值：无、字符、FormProperty_开头定义过的控件ID
+    是否参数：f为不是参数，s是字符，t是时间(不需要int，因为这里int等价于string)
+    例子：FormProperty_0lovri0-_!string-_!姓名-_!请输入姓名-_!f
+    FormProperty_1iu6onu-_!long-_!年龄-_!请输入年龄-_!s
+    FormProperty_2rd4dtv-_!cUser-_!执行人-_!无-_!s
+    注意:表单Key必须要任务编号一致
+    （因为参数需要任务key，但是无法获取，只能获取表单key“task.getFormKey()”当做任务key）
