@@ -75,6 +75,9 @@ body {
 .layui-table-tool-temp{
     padding-right: 0;
 }
+.layui-table{
+    width: 100% !important;
+}
 .floatR{
     float: right;
 }

@@ -267,7 +267,7 @@
       ],
       "properties": [
         {
-          "name": "candidateStarterGroups",
+          "name": "candidateStarterConfiguration",
           "isAttr": true,
           "type": "String"
         },
@@ -288,6 +288,12 @@
         },
         {
           "name": "isStartableInTasklist",
+          "isAttr": true,
+          "type": "Boolean",
+          "default": true
+        },
+        {
+          "name": "process-is-executable",
           "isAttr": true,
           "type": "Boolean",
           "default": true

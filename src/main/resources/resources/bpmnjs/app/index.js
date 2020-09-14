@@ -18,16 +18,7 @@ const publicurl = proHost + key;
 var customTranslateModule = {
     translate: ['value', customTranslate]
 };
-var ColorJson = [{
-    'name': 'test1',
-    'stroke': 'green',
-    'fill': 'yellow'
-}, {
-    'name': 'test2',
-    'stroke': 'blue',
-    'fill': 'red'
-}]
-
+debugger
 var container = $('#js-drop-zone');
 var canvas = $('#js-canvas');
 var bpmnModeler = new BpmnModeler({
@@ -61,34 +52,69 @@ $(function () {
     if (param.type === 'addBpmn') {
         tools.createDiagram(diagramXML, bpmnModeler, container);
     } else if (param.type === 'lookBpmn') { //编辑bpmn
+        debugger
         $('.item').hide()
         $('.download').show()
         const Id = param.deploymentFileUUID || '6d4af2dc-bab0-11ea-b584-3cf011eaafca'
         const Name=param.deploymentName || 'String.bpmn'
-        //加载后台方法获取xml
+        const instanceId=param.instanceId
         var param={
             "deploymentId":Id,
-            "resourceName":Name
+            "resourceName":decodeURI(Name)
         }
-        $.ajax({
-            url: publicurl+'processDefinition/getDefinitionXML',
-            type: 'GET',
-            data: param,
-            dataType:'text',
-            success: function (result) {
-                var newXmlData = result
-                tools.createDiagram(newXmlData, bpmnModeler, container);
-                setTimeout(function () {
-                    for (var i in ColorJson) {
-                        tools.setColor(ColorJson[i],bpmnModeler)
-                    }
-                }, 200)
-            },
-            error: function (err) {
-                console.log(err)
+        if(instanceId){
+            var param1={
+                instanceId
             }
-        });
-
+            $.ajax({
+                url: publicurl+'activitiHistory/gethighLine',
+                type: 'GET',
+                data: param1,
+                dataType:'json',
+                success: function (result) {
+                  var ColorJson=tools.getByColor(result.obj)
+                    $.ajax({
+                        url: publicurl+'processDefinition/getDefinitionXML',
+                        type: 'GET',
+                        data: param,
+                        dataType:'text',
+                        success: function (result) {
+                            var newXmlData = result
+                            tools.createDiagram(newXmlData, bpmnModeler, container);
+                            setTimeout(function () {
+                                for (var i in ColorJson) {
+                                    tools.setColor(ColorJson[i],bpmnModeler)
+                                }
+                            }, 200)
+                        },
+                        error: function (err) {
+                            console.log(err)
+                        }
+                    });
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            });
+        }else{
+            //加载后台方法获取xml
+            $.ajax({
+                url: publicurl+'processDefinition/getDefinitionXML',
+                type: 'GET',
+                data: param,
+                dataType:'text',
+                success: function (result) {
+                    var newXmlData = result
+                    tools.createDiagram(newXmlData, bpmnModeler, container);
+                },
+                error: function (err) {
+                    console.log(err)
+                }
+            });
+        }
+    } else if(param.type === "historyBpmn") { // bpmn历史
+        $('.item').hide()
+        $('.download').show()
     }
     // 点击新增
     $('#js-download-diagram').on("click", function () {
@@ -101,14 +127,14 @@ $(function () {
     })
     // 点击确定
     $('#sure').on('click',function(){
-        const text=$("#deploymentName").val()
-        tools.saveBpmn(bpmnModeler,text)
+       // const text=$("#deploymentName").val()
+        tools.saveBpmn(bpmnModeler)
     })
 
 
 
     // 点击下载
-    $("#saveBpmn").on("click", function () {
+    $("#downloadBpmn").on("click", function () {
         tools.downLoad(bpmnModeler)
     })
     // 点击上传

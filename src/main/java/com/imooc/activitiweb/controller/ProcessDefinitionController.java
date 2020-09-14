@@ -1,9 +1,9 @@
 package com.imooc.activitiweb.controller;
 
 import com.imooc.activitiweb.SecurityUtil;
+import com.imooc.activitiweb.mapper.ActivitiMapper;
 import com.imooc.activitiweb.util.AjaxResponse;
 import com.imooc.activitiweb.util.GlobalConfig;
-
 import org.activiti.api.process.runtime.ProcessRuntime;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
@@ -12,19 +12,17 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
-
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipInputStream;
-
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
@@ -39,6 +37,9 @@ public class ProcessDefinitionController {
 
     @Autowired
     private SecurityUtil securityUtil;
+
+    @Autowired
+    ActivitiMapper mapper;
 
 
     @PostMapping(value = "/uploadStreamAndDeployment")
@@ -118,14 +119,14 @@ public class ProcessDefinitionController {
      * @return
      */
     @PostMapping(value = "/addDeploymentByFileNameBPMN")
-    public AjaxResponse addDeploymentByFileNameBPMN(@RequestParam("deploymentFileUUID") String deploymentFileUUID,@RequestParam("deploymentName") String deploymentName) {
+    public AjaxResponse addDeploymentByFileNameBPMN(@RequestParam("deploymentFileUUID") String deploymentFileUUID, @RequestParam("deploymentName") String deploymentName) {
         try {
             String filename = "resources/bpmn/" + deploymentFileUUID;
             Deployment deployment = repositoryService.createDeployment()//初始化流程
                     .addClasspathResource(filename)
                     .name(deploymentName)
                     .deploy();
-            System.out.println(deployment.getName());
+            //System.out.println(deployment.getName());
             return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
                     GlobalConfig.ResponseCode.SUCCESS.getDesc(), deployment.getId());
         } catch (Exception e) {
@@ -136,13 +137,13 @@ public class ProcessDefinitionController {
     }
 
     @PostMapping(value = "/addDeploymentByString")
-    public AjaxResponse addDeploymentByString(@RequestParam("stringBPMN") String stringBPMN,@RequestParam("deploymentName") String deploymentName) {
+    public AjaxResponse addDeploymentByString(@RequestParam("stringBPMN") String stringBPMN) {
         try {
             Deployment deployment = repositoryService.createDeployment()
-                    .addString("OnLine.bpmn",stringBPMN)
-                    .name(deploymentName)
+                    .addString("CreateWithBPMNJS.bpmn",stringBPMN)
+                    .name("不知道在哪显示的部署名称")
                     .deploy();
-            System.out.println(deployment.getName());
+            //System.out.println(deployment.getName());
             return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
                     GlobalConfig.ResponseCode.SUCCESS.getDesc(), deployment.getId());
         } catch (Exception e) {
@@ -190,12 +191,13 @@ public class ProcessDefinitionController {
 
             for (ProcessDefinition pd : list) {
                 HashMap<String, Object> hashMap = new HashMap<>();
-                System.out.println("流程定义ID："+pd.getId());
-                hashMap.put("Name", pd.getName());
-                hashMap.put("Key", pd.getKey());
-                hashMap.put("ResourceName", pd.getResourceName());
-                hashMap.put("DeploymentId", pd.getDeploymentId());
-                hashMap.put("Version", pd.getVersion());
+                //System.out.println("流程定义ID："+pd.getId());
+                hashMap.put("processDefinitionID", pd.getId());
+                hashMap.put("name", pd.getName());
+                hashMap.put("key", pd.getKey());
+                hashMap.put("resourceName", pd.getResourceName());
+                hashMap.put("deploymentID", pd.getDeploymentId());
+                hashMap.put("version", pd.getVersion());
                 listMap.add(hashMap);
             }
 
@@ -235,13 +237,14 @@ public class ProcessDefinitionController {
     @GetMapping(value = "/getDeployments")
     public AjaxResponse getDeployments() {
         try {
+
             List<HashMap<String, Object>> listMap= new ArrayList<HashMap<String, Object>>();
             List<Deployment> list = repositoryService.createDeploymentQuery().list();
             for (Deployment dep : list) {
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("ID", dep.getId());
-                hashMap.put("Name", dep.getName());
-                hashMap.put("DeploymentTime", dep.getDeploymentTime());
+                hashMap.put("id", dep.getId());
+                hashMap.put("name", dep.getName());
+                hashMap.put("deploymentTime", dep.getDeploymentTime());
                 listMap.add(hashMap);
             }
 
@@ -258,10 +261,13 @@ public class ProcessDefinitionController {
 
     //删除流程定义
     @GetMapping(value = "/delDefinition")
-    public AjaxResponse delDefinition(@RequestParam("pdID") String pdID) {
+    public AjaxResponse delDefinition(@RequestParam("depID") String depID, @RequestParam("pdID") String pdID) {
         try {
 
-            repositoryService.deleteDeployment(pdID, true);
+            //删除数据
+            int result = mapper.DeleteFormData(pdID);
+
+            repositoryService.deleteDeployment(depID, true);
             return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
                     "删除成功", null);
 

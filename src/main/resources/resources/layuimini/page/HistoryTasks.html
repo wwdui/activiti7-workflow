@@ -60,7 +60,7 @@
                     }
                 }
                 return {
-                    "code": res.status === 1 ? 0 : res.status, //解析接口状态,默认成功是0
+                    "code": res.status, //解析接口状态,默认成功是0
                     "msg": res.msg, //解析提示文本
                     "count": res.obj.length, //解析数据长度
                     "data": res.obj //解析数据列表
@@ -75,7 +75,6 @@
                 {field: 'createTime', title: '创建时间', minWidth: 170,align:"center"},
                 {field: 'startTime', title: '开始时间', minWidth: 170,align:"center"},
                 {field: 'assignee', title: '办理人', minWidth: 90,align:"center"},
-                {title: '操作', minWidth: 200, toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,
@@ -83,6 +82,12 @@
             skin: 'line',
             // id:'HistoryTasksTableId',
             done:function (res, curr, count) {
+                if(res.code==1){
+                    layer.alert(res.msg+'<br>'+res.data, {
+                        icon: 2,
+                        title:"提示"
+                    });
+                }
                 if(count>0){
                     goPage(1);
                 }

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+        .layui-input, .layui-textarea{
+            width: 45% !important;
+        }
+        .layui-unselect , .layui-form-select{
+            width: 45% !important;
+        }
+        .layui-select-title input{
+            width: 100% !important;
+        }
+        .layui-form-select .layui-input {
+            padding-right: 30px;
+            cursor: pointer;
+        }
+        .yellowBg{
+            background: #faffbd;
+        }
+        #cancelBtn{
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form" id="defineForm">
+
+</div>
+<script src="../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script src="../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    var ids;
+    function child(obj,id){
+        var dataObj = JSON.parse(obj);
+        ids = id;
+
+        // console.log(dataObj,ids);//获取父界面的传值
+        layui.use(['form'], function (id) {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.$,
+                param='';
+            formTable(dataObj);
+            form.render();
+            //监听提交
+            form.on('submit(saveBtn)',function () {
+                var index = layer.confirm('确定要提交吗？', {
+                    skin: 'layui-layer-admin',
+                    shade: .1
+                }, function (i) {
+                    layer.close(i);
+                    var loadIndex = layer.load(2);
+                    param='';
+                    $(".js_val").each(function () {
+                        var isParm = $(this).attr("isParm");
+                        var id = $(this).attr("name");
+                        var val = $(this).val();
+                        var str = id+'-_!'+val+'-_!'+isParm;
+                        param+=str+'!_!'
+                    });
+                    var params = param.slice(0,param.length-3);
+                    console.log(params,"传参");
+                    $.post( ''+publicurl+'task/formDataSave', {
+                        taskID: localStorage.getItem("ID"),
+                        formData:params
+                    }, function (res) {
+                        layer.close(loadIndex);
+                        if (res.status === 0) {
+                            layer.msg(res.msg, {icon: 1});
+                            // 关闭弹出层
+                            layer.close(index);
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            setTimeout(function () {
+                                parent.layer.close(iframeIndex);
+                            },1500);
+                        } else {
+                            layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                        }
+                    });
+                });
+                return false;
+            });
+            //渲染动态表单
+            function formTable(res){
+                for(var i = 0 ; i < res.length ; i++) {
+                    var formItem;
+                    var input;
+                    switch(res[i].controlType){
+                        case 'long':
+                            if(res[i].controlDefValue == '无'){
+                                input =  '<input lay-verify="required|number"  type="text" isParm="'+res[i].controlIsParam+'" name="' + res[i].id + '" placeholder="" value="" class="layui-input yellowBg js_val" onkeyup="this.value=this.value.replace(/\\D|^0/g,\'\')" onafterpaste="this.value=this.value.replace(/\\D|^0/g,\'\')">' ;
+                            }else {
+                                input =  '<input lay-verify="required|number" type="text" isParm="'+res[i].controlIsParam+'"  name="' + res[i].id + '" value="' + res[i].controlDefValue + '" class="layui-input yellowBg js_val" onkeyup="this.value=this.value.replace(/\\D|^0/g,\'\')" onafterpaste="this.value=this.value.replace(/\\D|^0/g,\'\')">' ;
+                            }
+                            break;
+                        case 'cUser':
+                            input = '<select name="' + res[i].id + '"  isParm="'+res[i].controlIsParam+'" lay-filter="aihao" id="' + res[i].id + '" type="cUser" class="js_val js_select"></select>'
+                            break;
+                        case 'string':
+                            if(res[i].controlDefValue == '无'){
+                                input =  '<input lay-verify="required" type="text" isParm="'+res[i].controlIsParam+'" name="' + res[i].id + '" placeholder="" value="" class="layui-input js_val">' ;
+                            }else {
+                                input =  '<input lay-verify="required" type="text" isParm="'+res[i].controlIsParam+'" name="' + res[i].id + '" value="' + res[i].controlDefValue + '" placeholder="" class="layui-input js_val">' ;
+                            }
+                            break;
+                    }
+                    formItem = '<div class="layui-form-item">' +
+                        '        <label class="layui-form-label required">' + res[i].controlLable + '：</label>' +
+                        '        <div class="layui-input-block">' +
+                        input+
+                        '        </div>' +
+                        '    </div>';
+                    $("#defineForm").append(formItem);
+                }
+                $("#defineForm").append('<div class="layui-form-item">\n' +
+                    '        <div class="layui-input-block">\n' +
+                    '            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">提交任务</button>' +
+                    '        </div>' +
+                    '    </div>');
+
+                $(".js_select").each(function () {
+                    var id = $(this).attr("id");
+                    creatSelect(id);
+                });
+            };
+            //生成下拉框接口
+            function creatSelect(id) {
+                var loadIndex = layer.load(2);
+                $.get( ''+publicurl+'user/getUsers', {}, function (res) {
+                    layer.close(loadIndex);
+                    if (res.status === 0) {
+                        // layer.msg(res.msg, {icon: 1});
+                        CreateDropdown(id,res.obj);
+                        form.render();
+                    } else {
+                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                    }
+                });
+            };
+            //动态生成下拉框
+            function CreateDropdown(id, data) {
+                // $("#" + id).html("").append('<option value="">-请选择-</option>');
+                for (var key in data) {
+                    var publicOption = '<option  value="' + data[key].username + '">' + data[key].name+ '</option>';
+                    $("#" + id).append(publicOption);
+                }
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

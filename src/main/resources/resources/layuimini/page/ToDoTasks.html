@@ -49,11 +49,12 @@
                 //处理时间
                 for(var i = 0 ; i< res.obj.length ; i++){
                     for(k in res.obj[i]) {
-                        res.obj[i]["CreatedDate"] = renderTime(res.obj[i].CreatedDate)
+                        res.obj[i]["createdDate"] = renderTime(res.obj[i].createdDate);
+                        res.obj[i]['status']=judgeState(res.obj[i].status)
                     }
                 }
                 return {
-                    "code": res.status === 1 ? 0 : res.status, //解析接口状态,默认成功是0
+                    "code": res.status, //解析接口状态,默认成功是0
                     "msg": res.msg, //解析提示文本
                     "count": res.obj.length, //解析数据长度
                     "data": res.obj //解析数据列表
@@ -61,11 +62,13 @@
             },
             cols: [[
                 {type: "checkbox", width:'5%',align:"center"},
-                {field: 'ID', width:'25%', title: 'ID',align:"center"},
-                {field: 'InstanceName', width:'25%', title: '流程名称',align:"center"},
-                {field: 'Assignee', width:'15%', title: '办理人',align:"center"},
-                {field: 'CreatedDate', title: '创建时间', width:'15%',align:"center"},
-                {title: '操作', width:'15%', toolbar: '#currentTableBar', align: "center"}
+                {field: 'id', width:'13%', title: 'ID',align:"center"},
+                {field: 'instanceName', width:'22%', title: '流程名称',align:"center"},
+                {field: 'name', width:'15%', title: '任务节点名称',align:"center"},
+                {field: 'status', width:'12%', title: '任务状态',align:"center"},
+                {field: 'assignee', width:'8%', title: '办理人',align:"center"},
+                {field: 'createdDate', title: '创建时间', width:'15%',align:"center"},
+                {title: '操作', width:'10%', toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,
@@ -73,6 +76,13 @@
             skin: 'line',
             // id:'ToDoTasksTableId',
             done:function (res, curr, count) {
+                if(res.code==1){
+                    layer.alert(res.msg+'<br>'+res.data, {
+                        icon: 2,
+                        title:"提示"
+                    });
+                }
+
                 if(count>0){
                     goPage(1);
                 }
@@ -84,7 +94,8 @@
          */
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'handle') {  // 监听办理操作
-                doHandle(obj);
+                // console.log(obj);
+                creatFormTable(obj);
             }
         });
 
@@ -92,10 +103,58 @@
             var dateee = new Date(date).toJSON();
             return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
         }
+        function judgeState(state) {
+            var stateText='';
+            if(state == 'ASSIGNED'){
+                stateText='执行中';
+            }else {
+                stateText = state
+            }
+            return stateText
+        }
         //监听表格复选框选择
         table.on('checkbox(currentTableFilter)', function (obj) {
             console.log(obj)
         });
+        //动态生成表单
+        function creatFormTable(obj) {
+            var loadIndex = layer.load(2);
+            $.get( ''+publicurl+'task/formDataShow', {
+                taskID: obj.data ? obj.data.id : '',
+            }, function (res) {
+                layer.close(loadIndex);
+                if (res.obj != '无表单' && res.status == 0) {
+                    var index = layer.open({
+                        title: '办理任务',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['100%', '100%'],
+                        content: '../page/table/FormDataShow.html',
+                        success: function (layero, index) {
+                            var iframe = window['layui-layer-iframe' + index];
+                            iframe.child(JSON.stringify(res.obj),obj.data.id)
+                            localStorage.setItem("ID",obj.data.id);
+                        },
+                        end:function(){
+                            insTb.reload();
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                } else if(res.status == 1){
+                    parent.layer.msg(res.obj, {
+                        icon: 0,
+                        time: 2000
+                    });
+                }else {
+                    doHandle(obj);
+                }
+            }, 'json');
+
+        }
         /* 挂起流程定义 */
         function doHandle(obj) {
             console.log(obj,"单条数据");
@@ -106,7 +165,7 @@
                 layer.close(i);
                 var loadIndex = layer.load(2);
                 $.get( ''+publicurl+'task/completeTask', {
-                    taskID: obj.data ? obj.data.ID : '',
+                    taskID: obj.data ? obj.data.id : '',
                 }, function (res) {
                     layer.close(loadIndex);
                     if (res.status === 0) {

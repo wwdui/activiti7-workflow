@@ -91,10 +91,6 @@ const tools = {
                 return console.error('保存失败，请重试', err);
             }
             console.log(xml)
-            // const jsonObj = $x2j.xml2js(xml);
-            // console.log(jsonObj)
-            // let newXml = tools.camundaChangeActiviti(xml);
-            // console.log(newXml)
             var param={
                     "deploymentName":text,
                     "stringBPMN":xml
@@ -242,27 +238,6 @@ const tools = {
     camundaChangeActiviti(xmlfile){
         const objXML = xmlfile.replace(/camunda/gi,"activiti");
         return objXML;
-        // for(let e in json){
-        //     if(e=='extensionElements'&&json.extensionElements.formData&&json.extensionElements.formData.formField){
-        //         json.extensionElements._businessKey=json.extensionElements.formData._businessKey
-        //         let formProperty = JSON.parse(JSON.stringify(json.extensionElements.formData.formField))
-        //         if(tools.isArrayFn(formProperty)){
-        //             formProperty.forEach(x=>{
-        //                 x.__prefix='activiti'
-        //             })
-        //         } else {
-        //             formProperty.__prefix='activiti'
-        //         }
-        //         json.extensionElements.formProperty = formProperty
-        //         delete json.extensionElements.formData
-        //     } else if(e.includes('camunda')){
-        //         let str = e.replace('camunda','activiti')
-        //         json[str] = json[e]
-        //         delete json[e]
-        //     } else if(typeof json[e] == 'object'){
-        //         tools.camundaChangeActiviti(json[e])
-        //     }
-        // }
     },
     /**
      * 修改activiti为camunda
@@ -271,26 +246,6 @@ const tools = {
     acitvitiChangeCamunda(xmlfile){
         const objXML = xmlfile.replace(/activiti/gi,"camunda");
         return objXML;
-        // for(let e in json){
-        //     if(e=='extensionElements'&&json.extensionElements.formProperty){
-        //         let formField = JSON.parse(JSON.stringify(json.extensionElements.formProperty))
-        //         if(tools.isArrayFn(formField)){
-        //             formField.forEach(x=>{
-        //                 x.__prefix='camunda'
-        //             })
-        //         } else {
-        //             formField.__prefix='camunda'
-        //         }
-        //         json.extensionElements.formData = {
-        //             formField,
-        //             _businessKey:json.extensionElements._businessKey,
-        //             __prefix:"camunda"
-        //         }
-        //         delete json.extensionElements.formProperty
-        //     } else if(typeof json[e] == 'object'){
-        //         tools.acitvitiChangeCamunda(json[e])
-        //     }
-        // }
     },
 
     /**
@@ -304,6 +259,60 @@ const tools = {
         }else{
             return Object.prototype.toString.call(value) === "[object Array]";
         }
+    },
+    /**
+     * 根据数据设置颜色
+     * @param data
+     * @returns {Array}
+     */
+    getByColor(data){
+        var ColorJson=[]
+        for(var i in data){
+            switch (i) {
+                case "waitingToDo":
+                    for(var k in data[i]){
+                        var par={
+                            "name": data[i][k],
+                            "stroke":"green",
+                            "fill":"yellow"
+                        }
+                        ColorJson.push(par)
+                    }
+                    break
+                case "highPoint":
+                    for(var k in data[i]){
+                        var par={
+                            "name": data[i][k],
+                            "stroke":"gray",
+                            "fill":"#eae9e9"
+
+                        }
+                        ColorJson.push(par)
+                    }
+                    break
+                case "iDo":
+                    for(var k in data[i]){
+                        var par={
+                            "name": data[i][k],
+                            "stroke":"green",
+                            "fill":"#a3d68e"
+                        }
+                        ColorJson.push(par)
+                    }
+                    break
+                case "highLine":
+                    for(var k in data[i]){
+                        var par={
+                            "name": data[i][k],
+                            "stroke":"green",
+                            "fill":"green"
+                        }
+                        ColorJson.push(par)
+                    }
+                    break
+            }
+        }
+        return ColorJson
     }
 }
 

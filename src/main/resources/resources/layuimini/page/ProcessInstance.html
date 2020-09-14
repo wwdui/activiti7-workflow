@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <span class="layui-card-header"><i class="layui-icon layui-icon-form"></i>&nbsp;流程实例列表</span>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="ProcessDefinitionTableId" lay-filter="currentTableFilter"></table>
+        <!--分页-->
+        <div class="layui-table-page layui-border-box">
+            <div id="barcon" class="page_div" name="barcon"></div>
+        </div>
+
+        <script type="text/html" id="currentTableBar">
+              {{#  if(d.status == 'RUNNING'){ }}
+                <a class="layui-btn layui-btn-normal layui-btn-xs data-count-hangUp" lay-event="hangUp">挂起</a>
+              {{#  }else{ }}
+                <a class="layui-btn layui-btn-success layui-btn-xs data-count-active" lay-event="active">激活</a>
+              {{#  } }}
+              <a class="layui-btn layui-btn-xs layui-btn-info data-count-look" lay-event="look">历史</a>
+              <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+<script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../js/ManualPaging.js"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        var insTb = table.render({
+            elem: '#ProcessDefinitionTableId',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: [''],
+            url: ''+publicurl+'processInstance/getInstances',
+            parseData: function(res){ //res 即为原始返回的数据
+                // console.log(res.obj.length,"数据长度")
+                //处理时间
+                for(var i = 0 ; i< res.obj.length ; i++){
+                    for(k in res.obj[i]) {
+                        res.obj[i]["startDate"] = renderTime(res.obj[i].startDate)
+                    }
+                }
+                return {
+                    "code": res.status, //解析接口状态,默认成功是0
+                    "msg": res.msg, //解析提示文本
+                    "count": res.obj.length, //解析数据长度
+                    "data": res.obj //解析数据列表
+                };
+            },
+            cols: [[
+                {type: "checkbox", width:'5%',align:"center"},
+                {field: 'id', width:'10%', title: 'ID',align:"center"},
+                {field: 'name', width:'18%', title: '实例名称',align:"center"},
+                {field: 'startDate', title: '实例创建时间', width:'15%',align:"center"},
+                {field: 'processDefinitionId', title: '流程定义编号', width:'18%',align:"center"},
+                {field: 'processDefinitionKey', width:'12%', title: '流程定义KEY',align:"center"},
+                {field: 'processDefinitionVersion', width:'5%', title: '版本',align:"center"},
+                {title: '操作', width:'16%', toolbar: '#currentTableBar', align: "center"}
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: false,
+            skin: 'line',
+            // id:'ProcessDefinitionTableId',
+            done:function (res, curr, count) {
+                if(res.code==1){
+                    layer.alert(res.msg+'<br>'+res.data, {
+                        icon: 2,
+                        title:"提示"
+                    });
+                }
+                if(count>0){
+                    goPage(1);
+                }
+            }
+        });
+        insTb.reload();
+        /**
+         * toolbar监听事件
+         */
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'hangUp') {  // 监听挂起操作
+                doHangUp(obj);
+            } else if (obj.event === 'active'){// 监听激活操作
+                doActive(obj);
+            }else if (obj.event === 'delete') {  // 监听删除操作
+                doDel(obj);
+            }else if(obj.event === 'look'){
+                window.open(''+publicurl+'bpmnjs/dist/index.html?type=lookBpmn&instanceId='+data.id+'&deploymentFileUUID='+data.deploymentId+'&deploymentName='+ encodeURI(data.resourceName)+'');
+            }
+        });
+
+        function renderTime(date) {
+            var dateee = new Date(date).toJSON();
+            return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+        }
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+        /* 挂起流程定义 */
+        function doHangUp(obj) {
+            console.log(obj,"单条数据");
+            layer.confirm('确定要挂起该流程吗？', {
+                skin: 'layui-layer-admin',
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                var loadIndex = layer.load(2);
+                $.get( ''+publicurl+'processInstance/suspendInstance', {
+                    instanceID: obj.data ? obj.data.id : '',
+                }, function (res) {
+                    layer.close(loadIndex);
+                    if (res.status === 0) {
+                        layer.msg(res.msg, {icon: 1});
+                        insTb.reload();
+                    } else {
+                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                    }
+                }, 'json');
+            });
+        };
+        /* 激活流程定义 */
+        function doActive(obj) {
+            layer.confirm('确定要激活该流程吗？', {
+                skin: 'layui-layer-admin',
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                var loadIndex = layer.load(2);
+                $.get( ''+publicurl+'processInstance/resumeInstance', {
+                    instanceID: obj.data ? obj.data.id : '',
+                }, function (res) {
+                    layer.close(loadIndex);
+                    if (res.status === 0) {
+                        layer.msg(res.msg, {icon: 1});
+                        insTb.reload();
+                    } else {
+                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                    }
+                }, 'json');
+            });
+        };
+        /* 删除流程定义 */
+        function doDel(obj) {
+            layer.confirm('确定要删除该流程吗？', {
+                skin: 'layui-layer-admin',
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                var loadIndex = layer.load(2);
+                $.get( ''+publicurl+'processInstance/deleteInstance', {
+                    instanceID: obj.data ? obj.data.id : '',
+                }, function (res) {
+                    layer.close(loadIndex);
+                    if (res.status === 0) {
+                        layer.msg(res.msg, {icon: 1});
+                        obj.del();
+                        console.log(obj,"删除数据");
+                        insTb.reload();
+                    } else {
+                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                    }
+                }, 'json');
+            });
+        };
+
+    });
+</script>
+
+</body>
+</html>

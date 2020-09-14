@@ -3,8 +3,8 @@ package com.imooc.activitiweb.controller;
 
 import com.imooc.activitiweb.SecurityUtil;
 import com.imooc.activitiweb.mapper.ActivitiMapper;
-import com.imooc.activitiweb.pojo.UserInfoBean;
 import com.imooc.activitiweb.pojo.Act_ru_task;
+import com.imooc.activitiweb.pojo.UserInfoBean;
 import com.imooc.activitiweb.util.AjaxResponse;
 import com.imooc.activitiweb.util.GlobalConfig;
 import org.activiti.api.process.model.ProcessInstance;
@@ -13,11 +13,11 @@ import org.activiti.api.process.runtime.ProcessRuntime;
 import org.activiti.api.runtime.shared.query.Page;
 import org.activiti.api.runtime.shared.query.Pageable;
 import org.activiti.api.task.model.Task;
+import org.activiti.api.task.model.builders.TaskPayloadBuilder;
 import org.activiti.api.task.runtime.TaskRuntime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +35,8 @@ public class HelloController {
 
     @Autowired
     private ProcessRuntime processRuntime;
+
+
 
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -94,6 +96,7 @@ public class HelloController {
                     .withProcessDefinitionKey(processDefinitionKey)
                     .withName(instanceName)
                     .withVariable("assignee", "bajie")
+                    .withVariable("day", "4")
                     .withBusinessKey("自定义BusinessKey")
                     .build());
             return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
@@ -103,5 +106,28 @@ public class HelloController {
                     "创建流程实例失败", e.toString());
         }
     }
+
+
+    //完成待办任务带参数
+    @GetMapping(value = "/testcompleteTask")
+    public AjaxResponse testcompleteTask(@RequestParam("taskID") String taskID) {
+        try {
+            if (GlobalConfig.Test) {
+                securityUtil.logInAs("bajie");
+            }
+            Task task = taskRuntime.task(taskID);
+            taskRuntime.complete(TaskPayloadBuilder.complete().withTaskId(task.getId())
+                    .withVariable("day", "2")//执行环节设置变量
+                    .build());
+
+            return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.SUCCESS.getCode(),
+                    GlobalConfig.ResponseCode.SUCCESS.getDesc(), null);
+        } catch (Exception e) {
+            return AjaxResponse.AjaxData(GlobalConfig.ResponseCode.ERROR.getCode(),
+                    "完成失败", e.toString());
+        }
+    }
+
+
 
 }

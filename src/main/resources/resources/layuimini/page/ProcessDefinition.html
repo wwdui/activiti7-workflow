@@ -7,59 +7,117 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/admins.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
 </head>
+<style>
+    .layui-upload-file{
+        display: block !important;
+        position: absolute;
+        left: 52%;
+        top: 0;
+        width: 103px;
+        height: 38px;
+        z-index: 99;
+    }
+</style>
 <body>
 <div class="layuimini-container">
+
     <div class="layuimini-main">
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
-                <span class="layui-card-header"><i class="layui-icon layui-icon-form"></i>&nbsp;流程实例列表</span>
+                <span class="layui-card-header"><i class="layui-icon layui-icon-form"></i>&nbsp;流程部署列表</span>
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn floatR" lay-event="draw"> 在线绘制流程 </button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn floatR" lay-event="add"> 上传流程文件 </button>
             </div>
         </script>
 
-        <table class="layui-hide" id="ProcessDefinitionTableId" lay-filter="currentTableFilter"></table>
+        <table class="layui-hide" id="ProcessDeploymentsTableId" lay-filter="currentTableFilter"></table>
         <!--分页-->
         <div class="layui-table-page layui-border-box">
             <div id="barcon" class="page_div" name="barcon"></div>
         </div>
 
         <script type="text/html" id="currentTableBar">
-              {{#  if(d.status == 'RUNNING'){ }}
-                <a class="layui-btn layui-btn-normal layui-btn-xs data-count-hangUp" lay-event="hangUp">挂起</a>
-              {{#  }else{ }}
-                <a class="layui-btn layui-btn-success layui-btn-xs data-count-active" lay-event="active">激活</a>
-              {{#  } }}
-              <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-start" lay-event="start">启动实例</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-look" lay-event="look">查看</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除部署</a>
         </script>
 
     </div>
 </div>
+<!-- 表单添加bpmn弹窗 -->
+<script type="text/html" id="ProcessDepEditDialog">
+    <form id="ProcessDepForm" lay-filter="ProcessDepForm" class="layui-form model-form" enctype="multipart/form-data">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">上传文件:</label>
+            <div class="layui-input-block">
+                <input  id="fileName" placeholder="" class="layui-input DialogInput"
+                       lay-verType="tips"  disabled/>
+                <button type="button" class="layui-btn DialogBtn" id="uploadBpmn"><i class="layui-icon"></i>上传BPMN</button>
+                <input class="layui-upload-file" type="file" accept="" name="processFile" id="uploadFile">
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label layui-form-required">流程名称:</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <input name="deploymentName" id="deploymentName" placeholder="请输入流程名称" class="layui-input"-->
+<!--                       lay-verType="tips" lay-verify="required" required/>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" lay-filter="ProcessDepEditSubmit" lay-submit id="submit">提交</button>
+            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">返回</button>
+        </div>
+    </form>
+</script>
+<!--启动实例弹窗-->
+<script type="text/html" id="stratProcessDepEditDialog">
+    <form id="strarProcessDepForm" lay-filter="strarProcessDepForm" class="layui-form model-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">实例名称:</label>
+            <div class="layui-input-block">
+                <input name="deploymentName" id="instanceName" placeholder="请输入实例名称" class="layui-input"
+                       lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">实例描述:</label>
+            <div class="layui-input-block">
+                <input name="deploymentName" id="instanceVariable" placeholder="请输入实例描述" class="layui-input"
+                       lay-verType="tips" lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item text-center">
+            <button class="layui-btn" lay-filter="startProcessDepEditSubmit" lay-submit id="submit2">提交</button>
+            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">返回</button>
+        </div>
+    </form>
+</script>
 <script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
 <script src="../js/ManualPaging.js"></script>
 <script>
-    layui.use(['form', 'table'], function () {
+        layui.use(['form', 'table','admin','upload','laypage'], function () {
         var $ = layui.jquery,
             form = layui.form,
-            table = layui.table;
-
+            table = layui.table,
+            upload = layui.upload,
+            laypage = layui.laypage,
+            admin = layui.admin;
+        /*渲染列表*/
+        var limitcount = 10;
+        var curnum = 1;
         var insTb = table.render({
-            elem: '#ProcessDefinitionTableId',
+            elem: '#ProcessDeploymentsTableId',
             toolbar: '#toolbarDemo',
-            defaultToolbar: [''],
-            url: ''+publicurl+'processInstance/getInstances',
+            defaultToolbar: [],
+            url: ''+publicurl+'processDefinition/getDefinitions',
             parseData: function(res){ //res 即为原始返回的数据
-                // console.log(res.obj.length,"数据长度")
-                //处理时间
-                for(var i = 0 ; i< res.obj.length ; i++){
-                    for(k in res.obj[i]) {
-                        res.obj[i]["startDate"] = renderTime(res.obj[i].startDate)
-                    }
-                }
                 return {
-                    "code": res.status === 1 ? 0 : res.status, //解析接口状态,默认成功是0
+                    "code": res.status, //解析接口状态,默认成功是0
                     "msg": res.msg, //解析提示文本
                     "count": res.obj.length, //解析数据长度
                     "data": res.obj //解析数据列表
@@ -67,100 +125,129 @@
             },
             cols: [[
                 {type: "checkbox", width:'5%',align:"center"},
-                {field: 'id', width:'22%', title: 'ID',align:"center"},
-                {field: 'processDefinitionKey', width:'12%', title: '实例名称',align:"center"},
-                {field: 'startDate', title: '实例创建时间', width:'15%',align:"center"},
-                {field: 'initiator', width:'8%', title: '创建人',align:"center"},
-                {field: 'processDefinitionId', title: '流程定义编号', width:'20%',align:"center"},
-                {field: 'processDefinitionVersion', width:'6%', title: '版本',align:"center"},
-                {title: '操作', width:'12%', toolbar: '#currentTableBar', align: "center"}
+                {field: 'processDefinitionID', width:'12%', title: '流程定义ID', sort: true,align:"center"},
+                {field: 'deploymentID', width:'10%', title: '部署ID', sort: true,align:"center"},
+                {field: 'name', width:'15%', title: '流程定义名称',align:"center"},
+                {field: 'resourceName',width:'15%', title: '流程文件名称',align:"center"},
+                {field: 'key',width:'14%', title: 'KEY',align:"center"},
+                {field: 'version', width:'9%', title: '部署版本',align:"center"},
+                {title: '操作', width:'20%', toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,
             page: false,
             skin: 'line',
-            // id:'ProcessDefinitionTableId',
+            // id:'ProcessDeploymentsTableId',
             done:function (res, curr, count) {
+                if(res.code==1){
+                    layer.alert(res.msg+'<br>'+res.data, {
+                        icon: 2,
+                        title:"提示"
+                    });
+                }
                 if(count>0){
                     goPage(1);
                 }
             }
         });
-        insTb.reload();
         /**
-         * toolbar监听事件
+         * toolbar添加bpmn事件
+         * 新增  ?type=addBpmn
+            编辑  ?type=editBpmn&id=xxx
          */
-        table.on('tool(currentTableFilter)', function (obj) {
-            if (obj.event === 'hangUp') {  // 监听挂起操作
-                doHangUp(obj);
-            } else if (obj.event === 'active'){// 监听激活操作
-                doActive(obj);
-            }else if (obj.event === 'delete') {  // 监听删除操作
-                doDel(obj);
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                showEditModel();
+            }else if(obj.event === 'draw'){
+                window.open(''+publicurl+'bpmnjs/dist/index.html?type=addBpmn');
             }
         });
-
-        function renderTime(date) {
-            var dateee = new Date(date).toJSON();
-            return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        }
-        //监听表格复选框选择
-        table.on('checkbox(currentTableFilter)', function (obj) {
-            console.log(obj)
+        /*表格启动 删除事件*/
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var editData = JSON.stringify(data);
+            if (obj.event === 'start') {
+                stratProcessDepEditDialog(obj);
+            } else if (obj.event === 'delete') {
+                doDel(obj);
+            }else if(obj.event === 'look'){
+                window.open(''+publicurl+'bpmnjs/dist/index.html?type=lookBpmn&deploymentFileUUID='+data.deploymentID+'&deploymentName='+ encodeURI(data.resourceName)+'');
+            }
         });
-        /* 挂起流程定义 */
-        function doHangUp(obj) {
-            console.log(obj,"单条数据");
-            layer.confirm('确定要挂起该流程吗？', {
-                skin: 'layui-layer-admin',
-                shade: .1
-            }, function (i) {
-                layer.close(i);
-                var loadIndex = layer.load(2);
-                $.get( ''+publicurl+'processInstance/suspendInstance', {
-                    instanceID: obj.data ? obj.data.id : '',
-                }, function (res) {
-                    layer.close(loadIndex);
-                    if (res.status === 0) {
-                        layer.msg(res.msg, {icon: 1});
-                        insTb.reload();
-                    } else {
-                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
-                    }
-                }, 'json');
+        /* 上传流程文件 */
+        function showEditModel(mData) {
+            admin.open({
+                type: 1,
+                title: (mData ? '修改' : '添加') + '信息',
+                content: $('#ProcessDepEditDialog').html(),
+                success: function (layero, dIndex) {
+                    //上传BPMN-输入框赋值
+                    var $fileName =$("#fileName");
+                    $fileName.val("");
+                    $("#uploadFile").on("change",function (e) {
+                        var e = e || window.event;
+                        var files = e.target.files;
+                        if(files.length>0){
+                            // 获取文件名 并显示文件名
+                            var fileName = files[0].name;
+                            $fileName.val(fileName);
+                        }else{
+                            //清空文件名
+                            $fileName.val("");
+                        }
+                    });
+                    // 表单提交事件
+                    form.on('submit(ProcessDepEditSubmit)', function (data) {
+                        layer.close(dIndex);
+                        var fileObj = document.getElementById("uploadFile").files[0];
+                        if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                            layer.msg('请选择文件');
+                            return;
+                        };
+                        var formFile = new FormData();
+                        formFile.append('processFile',fileObj);
+                        // formFile.append('deploymentName',$('input[name="deploymentName"]').val());
+                        // var data = formFile;
+                        var loadIndex = layer.load(2);
+                        $.ajax({
+                            cache : true,
+                            type : "post",
+                            url :  ''+publicurl+'processDefinition/uploadStreamAndDeployment',
+                            async : false,
+                            data : formFile,
+                            contentType: false,
+                            processData: false,
+                            success : function(res) {
+                                layer.close(loadIndex);
+                                layer.msg(res.msg, {icon: 1});
+                                insTb.reload();
+                            },
+                            error : function(res) {
+                                layer.close(dIndex);
+                                layer.alert(res.msg+'<br>'+res.obj, {
+                                    icon: 2,
+                                    title:"提示"
+                                });
+                            }
+                        });
+                        return false;
+                    });
+                    // 禁止弹窗出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                }
             });
-        };
-        /* 激活流程定义 */
-        function doActive(obj) {
-            layer.confirm('确定要激活该流程吗？', {
-                skin: 'layui-layer-admin',
-                shade: .1
-            }, function (i) {
-                layer.close(i);
-                var loadIndex = layer.load(2);
-                $.get( ''+publicurl+'processInstance/resumeInstance', {
-                    instanceID: obj.data ? obj.data.id : '',
-                }, function (res) {
-                    layer.close(loadIndex);
-                    if (res.status === 0) {
-                        layer.msg(res.msg, {icon: 1});
-                        insTb.reload();
-                    } else {
-                        layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
-                    }
-                }, 'json');
-            });
-        };
-        /* 删除流程定义 */
+        }
+        /* 删除部署 */
         function doDel(obj) {
-            layer.confirm('确定要删除该流程吗？', {
+            layer.confirm('确定要删除选中数据吗？', {
                 skin: 'layui-layer-admin',
                 shade: .1
             }, function (i) {
                 layer.close(i);
                 var loadIndex = layer.load(2);
                 $.get( ''+publicurl+'processDefinition/delDefinition', {
-                    pdID: obj.data ? obj.data.id : '',
+                    depID: obj.data ? obj.data.deploymentID : '',
+                    pdID: obj.data ? obj.data.processDefinitionID : ''
                 }, function (res) {
                     layer.close(loadIndex);
                     if (res.status === 0) {
@@ -174,6 +261,39 @@
                 }, 'json');
             });
         };
+        /* 启动实例*/
+        function stratProcessDepEditDialog(obj) {
+            admin.open({
+                type: 1,
+                title:  '启动流程部署信息',
+                content: $('#stratProcessDepEditDialog').html(),
+                success:function(layero, dIndex){
+                    form.on('submit(strarProcessDepForm)', function (data) {
+                        var loadIndex = layer.load(2);
+                        $.get( ''+publicurl+'processInstance/startProcess',
+                            {
+                                processDefinitionKey:obj.data.key,
+                                instanceName:$("#instanceName").val(),
+                                instanceVariable:$("#instanceVariable").val()
+                        }, function (res) {
+                            layer.close(loadIndex);
+                            if (res.status === 0) {
+                                layer.close(dIndex);
+                                layer.msg(res.msg, {icon: 1});
+                                insTb.reload();
+                            } else {
+                                layer.close(dIndex);
+                                layer.alert(res.msg+'<br>'+res.obj, {icon: 2});
+                            }
+                        }, 'json');
+                        layer.close(loadIndex);
+                        return false;
+                    })
+                }
+            })
+        }
+
+
 
     });
 </script>

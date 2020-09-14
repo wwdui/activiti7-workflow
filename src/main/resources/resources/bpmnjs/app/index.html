@@ -12,6 +12,7 @@
   <style>
     .item{
       display: none;
+      cursor: pointer;
     }
     .bjs-powered-by {
       display: none;
@@ -78,28 +79,29 @@
   <li class="item upload">
     <form id="form1" name="myForm" onsubmit="return false" method="post" enctype="multipart/form-data" title="上传文件">
       <input type="file" name="uploadFile" id="uploadFile" accept=".bpmn" style="display: none">
-      <label class="label" for="uploadFile" >打开</label>
+      <label class="label" for="uploadFile" >导入</label>
     </form>
+  </li>
+  <li class="item download">
+    <a class="btn" href id="downloadBpmn">导出</a>
   </li>
   <li class="item submit">
     <a class="btn" id="js-download-diagram">
-       提交
+      部署
     </a>
-  </li>
-  <li class="item download">
-    <a class="btn" href id="saveBpmn">下载</a>
   </li>
 </ul>
 <div class="sy-alert sy-alert-model animated" sy-enter="zoomIn" sy-leave="zoomOut" sy-type="confirm" sy-mask="true" id="alert" >
-  <div class="sy-title">新增流程</div>
+  <div class="sy-title">部署流程</div>
   <div class="sy-content">
-    <div class="form">
-      <p class="input-item"><input id="deploymentName" type="text" placeholder="请输入流程名称"></p>
-    </div>
+        确认是否部署该流程
+<!--    <div class="form">-->
+<!--      <p class="input-item"><input id="deploymentName" type="text" placeholder="请输入流程名称"></p>-->
+<!--    </div>-->
   </div>
   <div class="sy-btn">
-    <button class="cancel" >取消</button>
     <button id="sure">确定</button>
+    <button class="cancel" >取消</button>
   </div>
 </div>
 <div class="sy-mask cancel"></div>

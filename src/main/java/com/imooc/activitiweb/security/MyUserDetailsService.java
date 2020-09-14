@@ -1,8 +1,8 @@
 package com.imooc.activitiweb.security;
 
 
-import com.imooc.activitiweb.pojo.UserInfoBean;
 import com.imooc.activitiweb.mapper.UserInfoBeanMapper;
+import com.imooc.activitiweb.pojo.UserInfoBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -15,7 +15,7 @@ public class SimpleResponse {
         this.content = content;
     }
 
-    private  Object content;
+    private Object content;
 
 
 }
