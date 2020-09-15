@@ -5,34 +5,14 @@
  */
 
 import $ from 'jquery';
-import x2js from 'x2js';
 const proHost = window.location.protocol + "//" + window.location.host;
 const href = window.location.href.split("bpmnjs")[0];
 const key = href.split(window.location.host)[1];
 const publicurl = proHost + key;
-//const publicurl='http://localhost:8080';
- const $x2j= new x2js()
 const tools = {
     registerFileDrop(container, callback) {
         container.get(0).addEventListener('dragover', tools.handleDragOver, false);
         container.get(0).addEventListener('drop', tools.handleFileSelect, false);
-    },
-    handleFileSelect(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        var files = e.dataTransfer.files;
-        var file = files[0];
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var xml = e.target.result;
-            callback(xml);
-        };
-        reader.readAsText(file);
-    },
-    handleDragOver(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'copy';
     },
     /**
      * 获取地址栏参数
@@ -85,14 +65,13 @@ const tools = {
      * 保存bpmn对象
      * @param {object} bpmnModeler bpmn对象
      */
-    saveBpmn(bpmnModeler,text) {
+    saveBpmn(bpmnModeler) {
         bpmnModeler.saveXML({ format: true }, function (err, xml) {
             if (err) {
                 return console.error('保存失败，请重试', err);
             }
             console.log(xml)
             var param={
-                    "deploymentName":text,
                     "stringBPMN":xml
                 }
             $.ajax({
@@ -120,7 +99,7 @@ const tools = {
      * @param {object} bpmnModeler bpmn对象
      */
     downLoad(bpmnModeler) {
-        var downloadLink = $("#saveBpmn")
+        var downloadLink = $("#downloadBpmn")
         bpmnModeler.saveXML({ format: true }, function (err, xml) {
             if (err) {
                 return console.error('could not save BPMN 2.0 diagram', err);
@@ -232,23 +211,6 @@ const tools = {
         })
     },
     /**
-     * 修改camunda为activiti
-     * @param json
-     */
-    camundaChangeActiviti(xmlfile){
-        const objXML = xmlfile.replace(/camunda/gi,"activiti");
-        return objXML;
-    },
-    /**
-     * 修改activiti为camunda
-     * @param json
-     */
-    acitvitiChangeCamunda(xmlfile){
-        const objXML = xmlfile.replace(/activiti/gi,"camunda");
-        return objXML;
-    },
-
-    /**
      * 判断是否是数组
      * @param value
      * @returns {arg is Array<any>|boolean}
@@ -266,51 +228,40 @@ const tools = {
      * @returns {Array}
      */
     getByColor(data){
-        var ColorJson=[]
-        for(var i in data){
-            switch (i) {
-                case "waitingToDo":
-                    for(var k in data[i]){
-                        var par={
-                            "name": data[i][k],
-                            "stroke":"green",
-                            "fill":"yellow"
-                        }
-                        ColorJson.push(par)
-                    }
-                    break
-                case "highPoint":
-                    for(var k in data[i]){
-                        var par={
-                            "name": data[i][k],
-                            "stroke":"gray",
-                            "fill":"#eae9e9"
 
-                        }
-                        ColorJson.push(par)
-                    }
-                    break
-                case "iDo":
-                    for(var k in data[i]){
-                        var par={
-                            "name": data[i][k],
-                            "stroke":"green",
-                            "fill":"#a3d68e"
-                        }
-                        ColorJson.push(par)
-                    }
-                    break
-                case "highLine":
-                    for(var k in data[i]){
-                        var par={
-                            "name": data[i][k],
-                            "stroke":"green",
-                            "fill":"green"
-                        }
-                        ColorJson.push(par)
-                    }
-                    break
+        var ColorJson=[]
+        for(var k in data['highLine']){
+            var par={
+                "name": data['highLine'][k],
+                "stroke":"green",
+                "fill":"green"
             }
+            ColorJson.push(par)
+        }
+        for(var k in data['highPoint']){
+            var par={
+                "name": data['highPoint'][k],
+                "stroke":"gray",
+                "fill":"#eae9e9"
+
+            }
+            ColorJson.push(par)
+        }
+        for(var k in data['iDo']){
+            var par={
+                "name": data['iDo'][k],
+                "stroke":"green",
+                "fill":"#a3d68e"
+            }
+            ColorJson.push(par)
+        }
+        for(var k in data['waitingToDo']){
+            var par={
+                "name": data['waitingToDo'][k],
+                "stroke":"green",
+                "fill":"yellow"
+            }
+            ColorJson.push(par)
         }
         return ColorJson
     }

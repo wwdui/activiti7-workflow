@@ -22,7 +22,7 @@ var DEFAULT_PROPS = {
   'expression': undefined
 };
 
-var ACTIVITI_FIELD_EXTENSION_ELEMENT = 'activiti:FormProperty';
+var ACTIVITI_FIELD_EXTENSION_ELEMENT = 'activiti:Field';
 
 module.exports = function(element, bpmnFactory, translate, options) {
 

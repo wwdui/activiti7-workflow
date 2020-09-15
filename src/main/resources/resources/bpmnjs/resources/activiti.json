@@ -890,6 +890,16 @@
           "name": "fields",
           "type": "Field",
           "isMany": true
+        },
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "eventDefinitions",
+          "type": "bpmn:TimerEventDefinition",
+          "isMany": true
         }
       ]
     },
@@ -961,7 +971,29 @@
       ]
     },
     {
-      "name": "FormProperty",
+      "name": "FormData",
+      "superClass": [ "Element" ],
+      "meta": {
+        "allowedIn": [
+          "bpmn:StartEvent",
+          "bpmn:UserTask"
+        ]
+      },
+      "properties": [
+        {
+          "name": "fields",
+          "type": "FormField",
+          "isMany": true
+        },
+        {
+          "name": "businessKey",
+          "type": "String",
+          "isAttr": true
+        }
+      ]
+    },
+    {
+      "name": "FormField",
       "superClass": [ "Element" ],
       "properties": [
         {
