@@ -1,0 +1,1074 @@
+{
+	"info": {
+		"_postman_id": "c5d13794-3046-40d4-a5dd-be87c30b643b",
+		"name": "BPMN",
+		"description": "BPMN的项目请求",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "用户",
+			"item": [
+				{
+					"name": "登录-login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/login?username=bajie&password=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "bajie"
+								},
+								{
+									"key": "password",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "获取用户列表:/user/getUsers",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/getDefinitions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"getDefinitions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "流程定义processDefinition",
+			"item": [
+				{
+					"name": "上传BPMN流媒体-/uploadStream",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "processFile",
+									"type": "file",
+									"src": "/D:/redmine/HouXuanRen20200707V1.bpmn"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/uploadStreamAndDeployment",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"uploadStreamAndDeployment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "上传BPMN-/upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "processFile",
+									"type": "file",
+									"src": "/D:/redmine/DocPush.bpmn"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/upload",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "部署BPMN文件(问题)/addDeploymentByFileNameBPMN?deploymentUUID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/addDeploymentByFileNameBPMN?deploymentFileUUID=e387c111-4c96-4f64-a759-1238e9faa40b.bpmn&deploymentName=申请请假流程0625",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"addDeploymentByFileNameBPMN"
+							],
+							"query": [
+								{
+									"key": "deploymentFileUUID",
+									"value": "e387c111-4c96-4f64-a759-1238e9faa40b.bpmn"
+								},
+								{
+									"key": "deploymentName",
+									"value": "申请请假流程0625"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "部署BPMN字符/addDeploymentByString?deploymentUUID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/addDeploymentByString?stringBPMN=<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<definitions xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:activiti=\"http://activiti.org/bpmn\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:tns=\"http://www.activiti.org/testm1587888989443\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" expressionLanguage=\"http://www.w3.org/1999/XPath\" id=\"m1587888989443\" name=\"\" targetNamespace=\"http://www.activiti.org/testm1587888989443\" typeLanguage=\"http://www.w3.org/2001/XMLSchema\">\n  <process id=\"myDocPushProcess\" isClosed=\"false\" isExecutable=\"true\" name=\"NameQingJia\" processType=\"None\">\n    <startEvent id=\"_2\" name=\"StartEvent\"/>\n    <endEvent id=\"_3\" name=\"EndEvent\"/>\n    <userTask activiti:assignee=\"bajie\" activiti:exclusive=\"true\" id=\"_4\" name=\"UserTask\"/>\n    <userTask activiti:assignee=\"wukong\" activiti:exclusive=\"true\" id=\"_5\" name=\"UserTask\"/>\n    <sequenceFlow id=\"_6\" sourceRef=\"_2\" targetRef=\"_4\"/>\n    <sequenceFlow id=\"_7\" sourceRef=\"_4\" targetRef=\"_5\"/>\n    <sequenceFlow id=\"_8\" sourceRef=\"_5\" targetRef=\"_3\"/>\n  </process>\n  <bpmndi:BPMNDiagram documentation=\"background=%233C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0\" id=\"Diagram-_1\" name=\"New Diagram\">\n    <bpmndi:BPMNPlane bpmnElement=\"myDocPushProcess\">\n      <bpmndi:BPMNShape bpmnElement=\"_2\" id=\"Shape-_2\">\n        <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"200.0\" y=\"40.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_3\" id=\"Shape-_3\">\n        <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"260.0\" y=\"350.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_4\" id=\"Shape-_4\">\n        <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"190.0\" y=\"140.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_5\" id=\"Shape-_5\">\n        <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"195.0\" y=\"260.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNEdge bpmnElement=\"_6\" id=\"BPMNEdge__6\" sourceElement=\"_2\" targetElement=\"_4\">\n        <di:waypoint x=\"216.0\" y=\"72.0\"/>\n        <di:waypoint x=\"216.0\" y=\"140.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n      <bpmndi:BPMNEdge bpmnElement=\"_7\" id=\"BPMNEdge__7\" sourceElement=\"_4\" targetElement=\"_5\">\n        <di:waypoint x=\"235.0\" y=\"195.0\"/>\n        <di:waypoint x=\"235.0\" y=\"260.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n      <bpmndi:BPMNEdge bpmnElement=\"_8\" id=\"BPMNEdge__8\" sourceElement=\"_5\" targetElement=\"_3\">\n        <di:waypoint x=\"270.0\" y=\"315.0\"/>\n        <di:waypoint x=\"270.0\" y=\"351.16760302580866\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n    </bpmndi:BPMNPlane>\n  </bpmndi:BPMNDiagram>\n</definitions>\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"addDeploymentByString"
+							],
+							"query": [
+								{
+									"key": "stringBPMN",
+									"value": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<definitions xmlns=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:activiti=\"http://activiti.org/bpmn\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:tns=\"http://www.activiti.org/testm1587888989443\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" expressionLanguage=\"http://www.w3.org/1999/XPath\" id=\"m1587888989443\" name=\"\" targetNamespace=\"http://www.activiti.org/testm1587888989443\" typeLanguage=\"http://www.w3.org/2001/XMLSchema\">\n  <process id=\"myDocPushProcess\" isClosed=\"false\" isExecutable=\"true\" name=\"NameQingJia\" processType=\"None\">\n    <startEvent id=\"_2\" name=\"StartEvent\"/>\n    <endEvent id=\"_3\" name=\"EndEvent\"/>\n    <userTask activiti:assignee=\"bajie\" activiti:exclusive=\"true\" id=\"_4\" name=\"UserTask\"/>\n    <userTask activiti:assignee=\"wukong\" activiti:exclusive=\"true\" id=\"_5\" name=\"UserTask\"/>\n    <sequenceFlow id=\"_6\" sourceRef=\"_2\" targetRef=\"_4\"/>\n    <sequenceFlow id=\"_7\" sourceRef=\"_4\" targetRef=\"_5\"/>\n    <sequenceFlow id=\"_8\" sourceRef=\"_5\" targetRef=\"_3\"/>\n  </process>\n  <bpmndi:BPMNDiagram documentation=\"background=%233C3F41;count=1;horizontalcount=1;orientation=0;width=842.4;height=1195.2;imageableWidth=832.4;imageableHeight=1185.2;imageableX=5.0;imageableY=5.0\" id=\"Diagram-_1\" name=\"New Diagram\">\n    <bpmndi:BPMNPlane bpmnElement=\"myDocPushProcess\">\n      <bpmndi:BPMNShape bpmnElement=\"_2\" id=\"Shape-_2\">\n        <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"200.0\" y=\"40.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_3\" id=\"Shape-_3\">\n        <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"260.0\" y=\"350.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"32.0\" width=\"32.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_4\" id=\"Shape-_4\">\n        <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"190.0\" y=\"140.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNShape bpmnElement=\"_5\" id=\"Shape-_5\">\n        <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"195.0\" y=\"260.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"55.0\" width=\"85.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNShape>\n      <bpmndi:BPMNEdge bpmnElement=\"_6\" id=\"BPMNEdge__6\" sourceElement=\"_2\" targetElement=\"_4\">\n        <di:waypoint x=\"216.0\" y=\"72.0\"/>\n        <di:waypoint x=\"216.0\" y=\"140.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n      <bpmndi:BPMNEdge bpmnElement=\"_7\" id=\"BPMNEdge__7\" sourceElement=\"_4\" targetElement=\"_5\">\n        <di:waypoint x=\"235.0\" y=\"195.0\"/>\n        <di:waypoint x=\"235.0\" y=\"260.0\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n      <bpmndi:BPMNEdge bpmnElement=\"_8\" id=\"BPMNEdge__8\" sourceElement=\"_5\" targetElement=\"_3\">\n        <di:waypoint x=\"270.0\" y=\"315.0\"/>\n        <di:waypoint x=\"270.0\" y=\"351.16760302580866\"/>\n        <bpmndi:BPMNLabel>\n          <dc:Bounds height=\"0.0\" width=\"0.0\" x=\"0.0\" y=\"0.0\"/>\n        </bpmndi:BPMNLabel>\n      </bpmndi:BPMNEdge>\n    </bpmndi:BPMNPlane>\n  </bpmndi:BPMNDiagram>\n</definitions>\n"
+								},
+								{
+									"key": "deploymentName",
+									"value": "请假流程0628",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "获取流程定义列表:/getDefinitions",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/getDefinitions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"getDefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "获取流程定义XML/getDefinitionXML",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/getDefinitionXML?deploymentID=6f82e834-b9e9-11ea-abb1-dcfb4875e032&resourceName=DocPush.bpmn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"getDefinitionXML"
+							],
+							"query": [
+								{
+									"key": "deploymentID",
+									"value": "6f82e834-b9e9-11ea-abb1-dcfb4875e032"
+								},
+								{
+									"key": "resourceName",
+									"value": "DocPush.bpmn"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "获取流程部署列表/getDeployments",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/getDeployments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"getDeployments"
+							]
+						},
+						"description": "返回值的列：\r\nID、流程部署名称、创建时间"
+					},
+					"response": []
+				},
+				{
+					"name": "删除流程部署(同时删除定义)/delDefinition",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processDefinition/delDefinition?pdID=d82f0afd-bf4d-11ea-91e6-522b73dcbd6c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"delDefinition"
+							],
+							"query": [
+								{
+									"key": "pdID",
+									"value": "d82f0afd-bf4d-11ea-91e6-522b73dcbd6c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3c91dac2-ab4e-4814-990e-63a796e770a5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "51558b6a-79fc-4df5-b2db-996fdb7a2ea6",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "流程实例processInstance",
+			"item": [
+				{
+					"name": "获取流程实例列表-/getInstances",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processInstance/getInstances",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processInstance",
+								"getInstances"
+							]
+						},
+						"description": "列：\r\nID、流程实例名称、启动时间、状态"
+					},
+					"response": []
+				},
+				{
+					"name": "启动流程实例-/startProcess",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processInstance/startProcess?processDefinitionKey=Process_HouXuanRen&instanceName=流程实例名称-候选人0707&instanceVariable=流程实例内容描述-候选人",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processInstance",
+								"startProcess"
+							],
+							"query": [
+								{
+									"key": "processDefinitionKey",
+									"value": "Process_HouXuanRen"
+								},
+								{
+									"key": "instanceName",
+									"value": "流程实例名称-候选人0707"
+								},
+								{
+									"key": "instanceVariable",
+									"value": "流程实例内容描述-候选人"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "删除流程实例-/deleteInstance",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/psrocessInstance/deleteInstance?instanceID=e9923c17-b45b-11ea-8f13-dcfb4875e032",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"psrocessInstance",
+								"deleteInstance"
+							],
+							"query": [
+								{
+									"key": "instanceID",
+									"value": "e9923c17-b45b-11ea-8f13-dcfb4875e032"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "挂起流程实例-/suspendInstance",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processInstance/suspendInstance?instanceID=ed20d166-b46c-11ea-b93f-dcfb4875e032",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processInstance",
+								"suspendInstance"
+							],
+							"query": [
+								{
+									"key": "instanceID",
+									"value": "ed20d166-b46c-11ea-b93f-dcfb4875e032"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "激活流程实例-/deleteInstance",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processInstance/resumeInstance?instanceID=ed20d166-b46c-11ea-b93f-dcfb4875e032",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processInstance",
+								"resumeInstance"
+							],
+							"query": [
+								{
+									"key": "instanceID",
+									"value": "ed20d166-b46c-11ea-b93f-dcfb4875e032"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "获取流程参数-/variables",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/processInstance/variables?instanceID=43d08691-b9e5-11ea-8e0f-522b73dcbd6c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"processInstance",
+								"variables"
+							],
+							"query": [
+								{
+									"key": "instanceID",
+									"value": "43d08691-b9e5-11ea-8e0f-522b73dcbd6c"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01c38a58-e456-41df-b726-99ebd292adfd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "cea7a0e6-79bc-4e9c-9d28-91abd9534c57",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "任务task",
+			"item": [
+				{
+					"name": "我的待办任务-/getTasks",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/task/getTasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"task",
+								"getTasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "完成待办任务-/completeTask",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/task/completeTask?taskID=95fd3087-b9ec-11ea-a7fd-522b73dcbd6c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"task",
+								"completeTask"
+							],
+							"query": [
+								{
+									"key": "taskID",
+									"value": "95fd3087-b9ec-11ea-a7fd-522b73dcbd6c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "渲染表单/formDataShow",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/task/formDataShow?taskID=00e7b095-e02f-11ea-8503-fa163ee33758",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"task",
+								"formDataShow"
+							],
+							"query": [
+								{
+									"key": "taskID",
+									"value": "00e7b095-e02f-11ea-8503-fa163ee33758"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "保存表单/formDataSave",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/task/formDataSave?taskID=800a2f22-e039-11ea-9c37-dcfb4875e032&formData=FormProperty_0lovri0-_!不是参数-_!f!_!FormProperty_1iu6onu-_!18-_!s",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"task",
+								"formDataSave"
+							],
+							"query": [
+								{
+									"key": "taskID",
+									"value": "800a2f22-e039-11ea-9c37-dcfb4875e032"
+								},
+								{
+									"key": "formData",
+									"value": "FormProperty_0lovri0-_!不是参数-_!f!_!FormProperty_1iu6onu-_!18-_!s"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "历史activitiHistory",
+			"item": [
+				{
+					"name": "用户历史任务-/getInstancesByUserName",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/activitiHistory/getInstancesByUserName",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activitiHistory",
+								"getInstancesByUserName"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "wukong",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "实例历史任务-/getInstancesByPiID",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/activitiHistory/getInstancesByPiID?piID=d53a887c-bc50-11ea-8636-fa163ee33758",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activitiHistory",
+								"getInstancesByPiID"
+							],
+							"query": [
+								{
+									"key": "piID",
+									"value": "d53a887c-bc50-11ea-8636-fa163ee33758"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "查看流程实例历史",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "$2a$10$gw46pmsOVYO.smHYQ2jH.OoXoe.lGP8OStDkHNs/E74GqZDL5K7ki",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "wukong",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/activitiHistory/gethighLine?instanceId=1f2314cb-cefa-11ea-84aa-dcfb4875e032",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"activitiHistory",
+								"gethighLine"
+							],
+							"query": [
+								{
+									"key": "instanceId",
+									"value": "1f2314cb-cefa-11ea-84aa-dcfb4875e032"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "af2d609b-0870-4dbc-8205-943f00e10eaf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1f1e1f2a-67fa-4cd7-9e9a-bf483486605a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "测试",
+			"item": [
+				{
+					"name": "上传BPMN正式服务器",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "processFile",
+									"type": "file",
+									"src": "/D:/redmine/DocPush.bpmn"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "http://139.9.118.236:8080/processDefinition/upload",
+							"protocol": "http",
+							"host": [
+								"139",
+								"9",
+								"118",
+								"236"
+							],
+							"port": "8080",
+							"path": [
+								"processDefinition",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "完成任务流程参数",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "processFile",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/testcompleteTask?taskID=6217fa3b-d09e-11ea-83ac-dcfb4875e032",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"testcompleteTask"
+							],
+							"query": [
+								{
+									"key": "taskID",
+									"value": "6217fa3b-d09e-11ea-83ac-dcfb4875e032"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

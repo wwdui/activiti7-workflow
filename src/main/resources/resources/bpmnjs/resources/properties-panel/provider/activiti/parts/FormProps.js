@@ -77,7 +77,7 @@ function formFieldTextField(options, getSelectedFormField) {
 
 function ensureFormKeyAndDataSupported(element) {
   return (
-    is(element, 'bpmn:StartEvent') && !is(element.parent, 'bpmn:SubProcess')
+      is(element, 'bpmn:StartEvent') && !is(element.parent, 'bpmn:SubProcess')
   ) || is(element, 'bpmn:UserTask');
 }
 
@@ -140,26 +140,26 @@ module.exports = function(group, element, bpmnFactory, translate) {
         extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
         commands.push(cmdHelper.updateProperties(element, { extensionElements: extensionElements }));
       }
-     /* var formData = formHelper.getFormData(element);
+      /* var formData = formHelper.getFormData(element);
 
-      if (!formData) {
-        formData = elementHelper.createElement('activiti:FormData', { fields: [] }, extensionElements, bpmnFactory);
-        commands.push(cmdHelper.addAndRemoveElementsFromList(
-          element,
-          extensionElements,
-          'values',
-          'extensionElements',
-          [formData],
-          []
-        ));
-      }*/
+       if (!formData) {
+         formData = elementHelper.createElement('activiti:FormData', { fields: [] }, extensionElements, bpmnFactory);
+         commands.push(cmdHelper.addAndRemoveElementsFromList(
+           element,
+           extensionElements,
+           'values',
+           'extensionElements',
+           [formData],
+           []
+         ));
+       }*/
       /**activiti 是向 extensionElements 下追加元素，而不是 formData 下，*/
       var field = elementHelper.createElement('activiti:FormProperty', { id: value }, extensionElements, bpmnFactory);
       if (typeof extensionElements.values !== 'undefined') {
         commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ field ]));
       } else {
         commands.push(cmdHelper.updateBusinessObject(element, extensionElements, {
-            values: [ field ]
+          values: [ field ]
         }));
       }
       return commands;
@@ -173,9 +173,9 @@ module.exports = function(group, element, bpmnFactory, translate) {
         commands.push(removeEntry(getBusinessObject(element), element, extensionElements));
       } else {
         commands.push(cmdHelper.removeElementsFromList(element, extensionElements, 'values', null, [entry]));
-       /* if (entry.id === formData.get('businessKey')) {
-          commands.push(cmdHelper.updateBusinessObject(element, extensionElements, { 'businessKey': undefined }));
-        }*/
+        /* if (entry.id === formData.get('businessKey')) {
+           commands.push(cmdHelper.updateBusinessObject(element, extensionElements, { 'businessKey': undefined }));
+         }*/
       }
 
       return commands;
@@ -287,18 +287,24 @@ module.exports = function(group, element, bpmnFactory, translate) {
   }));
 
   // [FormData] form field label text input field
-  group.entries.push(formFieldTextField({
+  group.entries.push(entryFactory.textField({
     id: 'form-field-label',
     label: translate('Label'),
-    modelProperty: 'label'
-  }, getSelectedFormField));
+    modelProperty: 'label',
+    hidden: function(element, node) {
+      return !getSelectedFormField(element, node);
+    }
+  }));
 
   // [FormData] form field defaultValue text input field
-  group.entries.push(formFieldTextField({
+  group.entries.push(entryFactory.textField({
     id: 'form-field-defaultValue',
     label: translate('Default Value'),
-    modelProperty: 'defaultValue'
-  }, getSelectedFormField));
+    modelProperty: 'defaultValue',
+    hidden: function(element, node) {
+      return !getSelectedFormField(element, node);
+    }
+  }));
 
 
   // [FormData] form field enum values label
@@ -334,10 +340,10 @@ module.exports = function(group, element, bpmnFactory, translate) {
           id = generateValueId();
 
       var enumValue = elementHelper.createElement(
-        'activiti:Value',
-        { id: id, name: undefined },
-        getBusinessObject(element),
-        bpmnFactory
+          'activiti:Value',
+          { id: id, name: undefined },
+          getBusinessObject(element),
+          bpmnFactory
       );
 
       return cmdHelper.addElementsTolist(element, selectedFormField, 'values', [enumValue]);
@@ -406,10 +412,10 @@ module.exports = function(group, element, bpmnFactory, translate) {
       }
 
       var newConstraint = elementHelper.createElement(
-        'activiti:Constraint',
-        { name: undefined, config: undefined },
-        validation,
-        bpmnFactory
+          'activiti:Constraint',
+          { name: undefined, config: undefined },
+          validation,
+          bpmnFactory
       );
 
       commands.push(cmdHelper.addElementsTolist(element, validation, 'constraints', [ newConstraint ]));
@@ -432,11 +438,11 @@ module.exports = function(group, element, bpmnFactory, translate) {
           currentConstraint = constraints[idx];
 
       commands.push(cmdHelper.removeElementsFromList(
-        element,
-        formField.validation,
-        'constraints',
-        null,
-        [ currentConstraint ]
+          element,
+          formField.validation,
+          'constraints',
+          null,
+          [ currentConstraint ]
       ));
 
       if (constraints.length === 1) {
